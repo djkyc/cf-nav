@@ -20,14 +20,7 @@ const HTML_CONTENT = `
         background-color: #121418; /* 深色背景作为底色 */
         color: #222; /* 深灰字体 */
         transition: all 0.3s ease;
-        /* --- 新增背景图设置 --- */
-        background-image: url('https://api.tomys.top/api/acgimg');
-        background-size: cover;       /* 让图片覆盖整个屏幕 */
-        background-position: center top;  /* 图片居中显示，优先显示顶部 */
-        background-attachment: fixed; /* 背景固定，不随内容滚动 */
-        background-repeat: no-repeat; /* 防止背景重复 */
-        min-height: 100vh;           /* 确保背景至少覆盖整个视口高度 */
-        /* --------------------- */
+     
     }
 
     /* 暗色模式样式 */

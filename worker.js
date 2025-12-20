@@ -932,7 +932,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
             <path d="M14 34l20-20 6 6-20 20H14v-6z" stroke="white" stroke-width="4" fill="none"/>
           </svg>
         </button>
-        <span class="admin-label">0 修改站点名称</span>
+        <span class="admin-label">0.修改站点名称</span>
       </div>
 
 
@@ -943,7 +943,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <path d="M14 26.72V34h7.32L42 13.31 34.7 6 14 26.72Z" stroke="white" stroke-width="4" stroke-linejoin="round" fill="none"/>
         </svg>
       </button>
-        <span class="admin-label">1 编辑链接（开启/关闭编辑按钮）</span>
+        <span class="admin-label">1.编辑链接（开启/关闭编辑按钮）</span>
       </div>
 
       <div class="admin-action">
@@ -953,7 +953,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <path d="M32 24H16M24 16v16" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
         </svg>
       </button>
-        <span class="admin-label">2 添加链接</span>
+        <span class="admin-label">2.添加链接</span>
       </div>
 
       <div class="admin-action">
@@ -963,7 +963,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <path d="M18 27h12M24 21v12" stroke="white" stroke-width="4" stroke-linecap="round"/>
         </svg>
       </button>
-        <span class="admin-label">3 添加分类</span>
+        <span class="admin-label">3.添加分类</span>
       </div>
 
       <div class="admin-action">
@@ -974,7 +974,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <path d="M24 21v3m0 8v3m4.8-12-2.1 2.1M20.8 31l-2.1 2.1M19 23l2.1 2.1M27 31l2.1 2.1M17 28h3M28 28h3" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-        <span class="admin-label">4 分类管理（改名/删除/上下移动）</span>
+        <span class="admin-label">4.分类管理（改名/删除/上下移动）</span>
       </div>
 
       <div class="admin-action">
@@ -985,7 +985,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <path d="M10 38h28" stroke="white" stroke-width="4" stroke-linecap="round"/>
         </svg>
       </button>
-        <span class="admin-label">5 导出数据（备份 JSON）</span>
+        <span class="admin-label">5.导出数据（备份 JSON）</span>
       </div>
 
       <div class="admin-action">

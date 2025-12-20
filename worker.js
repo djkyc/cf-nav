@@ -818,47 +818,6 @@ const HTML_CONTENT = `<!DOCTYPE html>
   z-index: 2000;
 }
 
-
-/* ===== 后台操作面板：弹缩模式 ===== */
-.add-remove-controls{
-  position: fixed !important;
-  top: 200px;
-  right: -260px;              /* 默认隐藏在右侧 */
-  width: 260px;
-  max-height: calc(100vh - 240px);
-  overflow-y: auto;
-  z-index: 2000;
-  transition: right .25s ease;
-}
-
-.add-remove-controls.open{
-  right: 20px;                /* 展开后 */
-}
-
-/* 右侧展开按钮 */
-.admin-panel-toggle{
-  position: fixed;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  z-index: 2100;
-  box-shadow: 0 6px 18px rgba(0,0,0,.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.admin-panel-toggle:hover{
-  background: var(--primary-hover);
-}
-
 </style>
 </head>
 <body>
@@ -2722,20 +2681,7 @@ document.getElementById("ai-generate-btn")?.addEventListener("click", async ()=>
   }
 });
 
-
-/* ===== 后台面板弹缩逻辑 ===== */
-function toggleAdminPanel(){
-  const panel = document.querySelector(".add-remove-controls");
-  if(!panel) return;
-  panel.classList.toggle("open");
-}
-
 </script>
-
-<button class="admin-panel-toggle" onclick="toggleAdminPanel()" title="后台操作">
-  ☰
-</button>
-
 </body>
 </html>
 `;
@@ -3158,6 +3104,39 @@ for (let i = 0; i < links.length; i++) {
         return new Response(JSON.stringify({ success: false, message: "备份操作失败" }), {
           status: 500,
           headers: { "Content-Type": "application/json; charset=utf-8" }
+        });
+      }
+    }
+
+    
+    // ===== FREE aiGenerate: meta-based (no paid API) =====
+    if (url.pathname === "/api/aiGenerate") {
+      const auth = request.headers.get("Authorization");
+      if (auth !== env.ADMIN_PASSWORD) {
+        return new Response("Unauthorized", { status: 401 });
+      }
+      const { url: targetUrl } = await request.json();
+      if (!targetUrl) {
+        return Response.json({ name: "", desc: "" });
+      }
+
+      try {
+        const res = await fetch(targetUrl, {
+          headers: { "User-Agent": "Mozilla/5.0" }
+        });
+        const html = await res.text();
+
+        const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+        const descMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)/i);
+
+        const name = titleMatch ? titleMatch[1].trim().slice(0, 12) : new URL(targetUrl).hostname;
+        const desc = descMatch ? descMatch[1].trim().slice(0, 40) : "常用网站";
+
+        return Response.json({ name, desc });
+      } catch (e) {
+        return Response.json({
+          name: new URL(targetUrl).hostname,
+          desc: "常用网站"
         });
       }
     }

@@ -10,40 +10,24 @@ const HTML_CONTENT = `<!DOCTYPE html>
   <title>Card Tab</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>⭐</text></svg>">
   <style>
-    /* ========= 全局 ========= */
-    :root{
-      --primary:#3b82f6;         /* 蓝色主色 */
-      --primary-hover:#2563eb;
-      --primary-soft:rgba(59,130,246,.2);
-      --danger:#e74c3c;
-      --danger-hover:#c0392b;
+/* ===== 黑白按钮主题（白色模式） ===== */
+--btn-bg:#111111;
+--btn-bg-hover:#000000;
+--btn-text:#ffffff;
 
-      --bg:#f8f6f2;
-      --text:#222;
-      --muted:#888;
+--btn-gradient:linear-gradient(
+  180deg,
+  #2b2b2b 0%,
+  #111111 100%
+);
 
-      --dark-bg:#121418;
-      --dark-card:#1e2128;
-      --dark-surface:#252830;
-      --dark-border:#2a2e38;
-      --dark-text:#e3e3e3;
-      --dark-muted:#a0a0a0;
+--btn-shadow:
+  0 4px 10px rgba(0,0,0,.25),
+  inset 0 1px 0 rgba(255,255,255,.15);
 
-      --dark-primary:#5d7fb9;
-      --dark-primary-hover:#4a6fa5;
-    }
+/* 卡片左侧强调边 */
+--accent-border:#111111;
 
-    body{
-      font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif;
-      margin:0;padding:0;
-      background-color:var(--bg);
-      color:var(--text);
-      transition:all .3s ease;
-    }
-    body.dark-theme{
-      background-color:var(--dark-bg);
-      color:var(--dark-text);
-    }
 
     /* ========= 顶部固定区 ========= */
     .fixed-elements{
@@ -82,9 +66,12 @@ const HTML_CONTENT = `<!DOCTYPE html>
       display:flex;align-items:center;gap:10px;
       z-index:1001;
     }
-    .admin-btn,.login-btn{
-      background-color:var(--primary);
-      color:#fff;border:none;border-radius:4px;
+    
+
+.admin-btn:hover,.login-btn:hover{
+  background:var(--btn-bg-hover);
+}
+border:none;border-radius:4px;
       padding:8px 16px;font-size:13px;
       cursor:pointer;transition:all .3s ease;
       font-weight:500;
@@ -338,20 +325,29 @@ const HTML_CONTENT = `<!DOCTYPE html>
     }
     body.dark-theme .admin-label{ color:#e5e7eb; }
 .round-btn{
-      background:var(--primary);
-      color:#fff;border:none;border-radius:50%;
-      width:40px;height:40px;
-      display:flex;align-items:center;justify-content:center;
-      font-size:22px;cursor:pointer;
-      box-shadow:0 3px 10px rgba(0,0,0,.15);
-      transition:all .3s ease;
-      position:relative;
+  background:var(--btn-gradient);
+  color:var(--btn-text);
+  border:none;
+  border-radius:50%;
+  width:40px;height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:var(--btn-shadow);
+  transition:.25s;
+}
+
+.round-btn:hover{
+  transform:translateY(-3px);
+  background:var(--btn-bg-hover);
+}
+
+.round-btn:active{
+  transform:translateY(-1px);
+}
+
     }
-    .round-btn:hover{
-      transform:translateY(-3px);
-      box-shadow:0 5px 15px rgba(0,0,0,.2);
-    }
-    body.dark-theme .round-btn{ background:var(--dark-primary); }
+
     .round-btn svg{ pointer-events:none;display:block;margin:auto; }
 
     /* 按钮顺序 */
@@ -406,14 +402,14 @@ const HTML_CONTENT = `<!DOCTYPE html>
       box-shadow:0 3px 10px rgba(0,0,0,.06);
       cursor:pointer;transition:all .3s ease;
       position:relative;user-select:none;
-      border-left:3px solid var(--primary);
+      border-left:3px solid var(--accent-border);
       animation:fadeIn .3s ease forwards;
       animation-delay:calc(var(--card-index) * .05s);
       opacity:0;margin:2px;
     }
     body.dark-theme .card{
       background:var(--dark-card);
-      border-left-color:var(--dark-primary);
+
       box-shadow:0 4px 12px rgba(0,0,0,.2);
     }
     @keyframes fadeIn{ from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }

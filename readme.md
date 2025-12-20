@@ -1,4 +1,4 @@
-## 🚀 一键部署到 Cloudflare Workers
+## 🚀 一键部署到 Cloudflare Workers 点击cf图标一键部署
 
 [![Deploy to Cloudflare Workers](https://img.shields.io/badge/Deploy-Cloudflare%20Workers-F38020?logo=cloudflare&logoColor=white)](
 https://deploy.workers.cloudflare.com/?url=https://github.com/djkyc/cf-nav

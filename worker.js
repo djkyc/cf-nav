@@ -996,7 +996,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <path d="M10 10h28" stroke="white" stroke-width="4" stroke-linecap="round"/>
         </svg>
       </button>
-        <span class="admin-label">6 导入数据（覆盖恢复）</span>
+        <span class="admin-label">6.导入数据（覆盖恢复）</span>
       </div>
 
       <input type="file" id="import-file" accept="application/json" style="display:none;" />
@@ -2780,7 +2780,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("tips-input").value = data.desc;
       }
     }catch(e){
-      alert("AI 识别失败");
+      
     }finally{
       btn.disabled = false;
       btn.textContent = "AI";
@@ -3249,6 +3249,53 @@ for (let i = 0; i < links.length; i++) {
           desc: "常用网站"
         });
       }
+    }
+
+    
+    // ===== FREE aiGenerate (robust, never fail) =====
+    if (url.pathname === "/api/aiGenerate") {
+      let targetUrl = "";
+      try{
+        const body = await request.json();
+        targetUrl = body.url || "";
+      }catch(e){}
+
+      if (!targetUrl) {
+        return Response.json({ name: "", desc: "" });
+      }
+
+      let hostname = targetUrl;
+      try{ hostname = new URL(targetUrl).hostname; }catch(e){}
+
+      let html = "";
+
+      // Try direct fetch
+      try{
+        const res = await fetch(targetUrl, {
+          headers:{ "User-Agent":"Mozilla/5.0" },
+          redirect:"follow"
+        });
+        html = await res.text();
+      }catch(e){}
+
+      // Fallback: textise proxy
+      if(!html || html.length < 200){
+        try{
+          const textiseUrl = "https://textise.net/showtext.aspx?strURL=" + encodeURIComponent(targetUrl);
+          const res2 = await fetch(textiseUrl, { redirect:"follow" });
+          html = await res2.text();
+        }catch(e){}
+      }
+
+      const ogTitle = html.match(/og:title[^>]*content=["']([^"']+)/i);
+      const ogDesc  = html.match(/og:description[^>]*content=["']([^"']+)/i);
+      const title   = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+      const desc    = html.match(/name=["']description["'][^>]*content=["']([^"']+)/i);
+
+      const name = (ogTitle?.[1] || title?.[1] || hostname).replace(/\s+/g," ").trim().slice(0,16);
+      const description = (ogDesc?.[1] || desc?.[1] || "常用网站").replace(/\s+/g," ").trim().slice(0,40);
+
+      return Response.json({ name, desc: description });
     }
 
     return new Response("Not Found", { status: 404 });

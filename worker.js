@@ -841,6 +841,36 @@ const HTML_CONTENT = `<!DOCTYPE html>
   justify-content:center;
 }
 
+
+/* ===== 后台操作面板：边缘拉出模式 ===== */
+.add-remove-controls{
+  position: fixed !important;
+  top: 180px;
+  right: -280px;          /* 默认完全隐藏 */
+  width: 260px;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+  z-index: 2000;
+  transition: right .25s ease;
+}
+.add-remove-controls.open{
+  right: 20px;
+}
+
+/* 右侧边缘拉出按钮 */
+.admin-panel-handle{
+  position: fixed;
+  right: 0;
+  top: 55%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 80px;
+  border-radius: 8px 0 0 8px;
+  background: var(--primary);
+  cursor: pointer;
+  z-index: 2100;
+}
+
 </style>
 </head>
 <body>
@@ -2703,7 +2733,29 @@ document.getElementById("ai-generate-btn")?.addEventListener("click", async ()=>
   }
 });
 
+
+/* ===== 后台面板拉出/自动收起 ===== */
+function openAdminPanel(){
+  const panel = document.querySelector(".add-remove-controls");
+  if(panel) panel.classList.add("open");
+}
+
+document.addEventListener("click", (e) => {
+  const panel = document.querySelector(".add-remove-controls");
+  const handle = document.querySelector(".admin-panel-handle");
+  if(!panel || !handle) return;
+
+  if(panel.classList.contains("open")){
+    if(!panel.contains(e.target) && !handle.contains(e.target)){
+      panel.classList.remove("open");
+    }
+  }
+});
+
 </script>
+
+<div class="admin-panel-handle" onclick="openAdminPanel()" title="后台操作"></div>
+
 </body>
 </html>
 `;

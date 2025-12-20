@@ -996,7 +996,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <path d="M10 10h28" stroke="white" stroke-width="4" stroke-linecap="round"/>
         </svg>
       </button>
-        <span class="admin-label">6 导入数据（覆盖恢复）</span>
+        <span class="admin-label">6.导入数据（覆盖恢复）</span>
       </div>
 
       <input type="file" id="import-file" accept="application/json" style="display:none;" />
@@ -2791,6 +2791,46 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <div class="admin-panel-handle" onclick="openAdminPanel()" title="后台操作"></div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("ai-generate-btn");
+  if (!btn) return;
+
+  btn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const url = document.getElementById("url-input")?.value;
+    if (!url) {
+      alert("请先填写地址");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "AI...";
+
+    try {
+      const res = await fetch("/api/aiGenerate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url })
+      });
+
+      const data = await res.json();
+      if (data?.name) document.getElementById("name-input").value = data.name;
+      if (data?.desc) document.getElementById("tips-input").value = data.desc;
+    } catch (err) {
+      console.error("AI 调用失败", err);
+      alert("AI 调用失败");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "AI";
+    }
+  });
+});
+</script>
 
 </body>
 </html>

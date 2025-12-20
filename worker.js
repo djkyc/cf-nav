@@ -21,7 +21,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
       --danger:#e74c3c;
       --danger-hover:#c0392b;
 
-      --bg:#f8f6f2;
+      --bg:#ffffff;
       --text:#222;
       --muted:#888;
 

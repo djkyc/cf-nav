@@ -750,7 +750,8 @@ const HTML_CONTENT = `<!DOCTYPE html>
 </head>
 <body>
   <div class="fixed-elements">
-    <h3>我的导航</h3>
+    <div id="site-title" style="text-align:center;font-size:24px;font-weight:700;cursor:pointer;">我的导航</div>
+    <div id="site-datetime" style="text-align:center;font-size:13px;color:var(--muted);margin-top:6px;"></div>
 
     <div class="center-content">
       <!-- 搜索栏 -->
@@ -2501,7 +2502,36 @@ const HTML_CONTENT = `<!DOCTYPE html>
         console.error("Initialization failed");
       }
     });
-  </script>
+  
+/* ===== 北京时间 ===== */
+function updateBeijingTime(){
+  const now = new Date();
+  const bj = new Date(now.toLocaleString("en-US",{timeZone:"Asia/Shanghai"}));
+  const week=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+  document.getElementById("site-datetime").textContent =
+    bj.getFullYear()+"年"+(bj.getMonth()+1)+"月"+bj.getDate()+"日 "+
+    week[bj.getDay()]+" "+bj.toLocaleTimeString("zh-CN",{hour12:false});
+}
+setInterval(updateBeijingTime,1000);
+updateBeijingTime();
+
+/* ===== 标题可编辑并保存 ===== */
+const titleEl=document.getElementById("site-title");
+const savedTitle=localStorage.getItem("siteTitle");
+if(savedTitle) titleEl.textContent=savedTitle;
+
+if(isAdmin){
+  titleEl.title="点击修改标题";
+  titleEl.onclick=()=>{
+    const v=prompt("请输入站点标题",titleEl.textContent);
+    if(v){
+      titleEl.textContent=v;
+      localStorage.setItem("siteTitle",v);
+    }
+  };
+}
+
+</script>
 </body>
 </html>
 `;

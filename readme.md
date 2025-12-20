@@ -4,6 +4,8 @@
 https://deploy.workers.cloudflare.com/?url=https://github.com/djkyc/cf-nav
 )
 
+效果图
+<img width="1352" height="606" alt="image" src="https://github.com/user-attachments/assets/e1127beb-1658-4dc6-b91a-f15ab7ebb75f" />
 
 
 

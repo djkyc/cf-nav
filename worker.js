@@ -325,10 +325,19 @@ const HTML_CONTENT = `<!DOCTYPE html>
       background-color:var(--bg);
       color:var(--text);
       transition:all .3s ease;
+
+      /* Theme-bound variables (manual toggle wins over OS scheme) */
+      --primary:#111111;
+      --primary-hover:#000000;
+      --primary-soft:rgba(0,0,0,.15);
     }
     body.dark-theme{
       background-color:var(--dark-bg);
       color:var(--dark-text);
+
+      --primary:#f5f5f5;
+      --primary-hover:#ffffff;
+      --primary-soft:rgba(255,255,255,.25);
     }
 
     
@@ -550,6 +559,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
       color:#fff;padding:0 20px;cursor:pointer;
       transition:background-color .3s;
     }
+    .search-bar button svg{ width:18px;height:18px;stroke:currentColor;fill:none;display:block; }
     .search-bar button:hover{ background:var(--primary-hover); }
 
     body.dark-theme .search-bar{ border-color:#323642;background:#1e2128; }
@@ -870,6 +880,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
     body.dark-theme .floating-button-group button{ background:var(--dark-primary); }
     body.dark-theme .floating-button-group button:hover{ background:var(--dark-primary-hover); }
     #theme-toggle{ font-size:24px;line-height:40px; }
+    #theme-toggle svg{ width:22px;height:22px;stroke:currentColor;fill:none;display:block; }
 
     /* ========= 对话框/弹窗 ========= */
     #dialog-overlay{
@@ -1132,12 +1143,30 @@ const HTML_CONTENT = `<!DOCTYPE html>
   right: 0;
   top: 55%;
   transform: translateY(-50%);
-  width: 14px;
-  height: 80px;
-  border-radius: 8px 0 0 8px;
+  width: 18px;
+  height: 84px;
+  border-radius: 10px 0 0 10px;
   background: var(--primary);
   cursor: pointer;
   z-index: 2100;
+  box-shadow: 0 6px 18px rgba(0,0,0,.22);
+  opacity: .92;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.admin-panel-handle::after{
+  content:"";
+  width:12px;
+  height:12px;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:12px 12px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
+}
+body.dark-theme .admin-panel-handle{
+  background: var(--dark-primary);
+  box-shadow: 0 8px 22px rgba(0,0,0,.35);
 }
 
 
@@ -1162,20 +1191,14 @@ const HTML_CONTENT = `<!DOCTYPE html>
   z-index: 3000;
 }
 
-@media (prefers-color-scheme: light) {
-  .admin-panel-hint {
-    background: #111;
-    color: #fff;
-  }
+.admin-panel-hint{
+  background:#111;
+  color:#fff;
 }
-
-@media (prefers-color-scheme: dark) {
-  .admin-panel-hint {
-    background: #fff;
-    color: #111;
-  }
+body.dark-theme .admin-panel-hint{
+  background:#fff;
+  color:#111;
 }
-
 </style>
 </head>
 <body>
@@ -1194,7 +1217,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
             <option value="duckduckgo">DuckDuckGo</option>
           </select>
           <input type="text" id="search-input" placeholder="搜索..." />
-          <button id="search-button">??</button>
+          <button id="search-button" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.35-4.35"></path></svg></button>
         </div>
       </div>
 
@@ -1316,7 +1339,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <path d="M12 24l12-12 12 12m-24 12 12-12 12 12" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-      <button id="theme-toggle" onclick="toggleTheme()">?</button>
+      <button id="theme-toggle" onclick="toggleTheme()" aria-label="切换主题"></button>
     </div>
 
     <!-- 添加/编辑链接对话框 -->
@@ -1459,6 +1482,49 @@ const HTML_CONTENT = `<!DOCTYPE html>
     let removeMode = false;
     let isEditCategoryMode = false;
     let isDarkTheme = false;
+
+    /* ================= Theme (manual toggle + persist) ================= */
+    const THEME_ICONS = {
+      sun: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2.5"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path>
+      </svg>`,
+      moon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>`
+    };
+
+    function updateThemeToggleIcon(){
+      const btn = document.getElementById("theme-toggle");
+      if(!btn) return;
+      // In dark mode show "sun" (switch to light); in light show "moon" (switch to dark)
+      btn.innerHTML = isDarkTheme ? THEME_ICONS.sun : THEME_ICONS.moon;
+      const title = isDarkTheme ? "切换到浅色模式" : "切换到深色模式";
+      btn.title = title;
+      btn.setAttribute("aria-label", title);
+    }
+
+    function setTheme(isDark, persist){
+      isDarkTheme = !!isDark;
+      document.body.classList.toggle("dark-theme", isDarkTheme);
+      updateThemeToggleIcon();
+      if(persist){
+        try{ localStorage.setItem("theme", isDarkTheme ? "dark" : "light"); }catch(e){}
+      }
+    }
+
+    (function initTheme(){
+      let saved = null;
+      try{ saved = localStorage.getItem("theme"); }catch(e){}
+      if(saved === "dark") setTheme(true, false);
+      else if(saved === "light") setTheme(false, false);
+      else {
+        const prefersDark = !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        setTheme(prefersDark, false);
+      }
+    })();
     let links = [];
     const categories = {};
 
@@ -2516,9 +2582,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
     /* ================= 主题 & 返回顶部 ================= */
     function toggleTheme(){
-      isDarkTheme = !isDarkTheme;
-      if(isDarkTheme) document.body.classList.add("dark-theme");
-      else document.body.classList.remove("dark-theme");
+      setTheme(!isDarkTheme, true);
       logAction("切换主题", { isDarkTheme: isDarkTheme });
     }
 

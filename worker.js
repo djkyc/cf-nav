@@ -113,11 +113,13 @@ export default {
     }
 
     if (url.pathname === "/api/saveOrder") {
-      const auth = request.headers.get("Authorization");
-      if (auth !== env.ADMIN_PASSWORD) {
-        return new Response("Unauthorized", { status: 401 });
-      }
-      const body = await request.json();
+      let auth = request.headers.get("Authorization");
+let body = {};
+try { body = await request.json(); } catch {}
+if (auth !== env.ADMIN_PASSWORD && body.password !== env.ADMIN_PASSWORD) {
+  return new Response("Unauthorized", { status: 401 });
+}
+
       await env.CARD_ORDER.put(SEED_USER_ID, JSON.stringify(body));
       return Response.json({ ok: true });
     }

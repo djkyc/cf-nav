@@ -86,24 +86,17 @@ export default {
       }
 
       /* ---------- Worker SMART FALLBACK ---------- */
-      
       let fallbackDesc = "官方网站入口";
-
-      if (domain === "google") fallbackDesc = "搜索与地图服务平台";
-      if (domain === "maps") fallbackDesc = "全球地图与导航服务";
       if (domain === "uptodown") fallbackDesc = "应用与软件下载平台";
       if (domain === "github") fallbackDesc = "开源代码托管平台";
       if (domain === "cloudflare") fallbackDesc = "网络与安全服务平台";
-      if (domain === "youtube") fallbackDesc = "在线视频播放平台";
-      if (domain === "twitter" || domain === "x") fallbackDesc = "社交媒体交流平台";
-      if (domain === "facebook") fallbackDesc = "社交网络互动平台";
+      if (domain === "google") fallbackDesc = "搜索与互联网服务";
 
       return Response.json({
         name: domain.charAt(0).toUpperCase() + domain.slice(1),
         desc: fallbackDesc,
         source: "fallback"
       });
-);
     }
 
     /* ================= PAGE ================= */
@@ -154,7 +147,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nav-CF</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2215%22 y=%2220%22 width=%2255%22 height=%2210%22 rx=%225%22 fill=%22black%22/><rect x=%2225%22 y=%2240%22 width=%2255%22 height=%2210%22 rx=%225%22 fill=%22black%22/><rect x=%2235%22 y=%2260%22 width=%2255%22 height=%2210%22 rx=%225%22 fill=%22black%22/></svg>"><text y=%22.9em%22 font-size=%2280%22>⭐</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2215%22 y=%2220%22 width=%2255%22 height=%2210%22 rx=%225%22 fill=%22black%22/><rect x=%2225%22 y=%2240%22 width=%2255%22 height=%2210%22 rx=%225%22 fill=%22black%22/><rect x=%2235%22 y=%2260%22 width=%2255%22 height=%2210%22 rx=%225%22 fill=%22black%22/></svg>"><text y=%22.9em%22 font-size=%2280%22>?</text></svg>">
   <style>
     /* ========= 全局 ========= */
     :root{
@@ -1052,35 +1045,6 @@ const HTML_CONTENT = `<!DOCTYPE html>
 }
 
 </style>
-<style>
-/* ===== 侧边后台菜单提示：点我②（首次闪烁） ===== */
-@keyframes tapMeBlink {
-  0%   { opacity: .25; }
-  50%  { opacity: 1; }
-  100% { opacity: .25; }
-}
-
-.admin-panel-hint {
-  position: fixed;
-  right: 26px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  animation: tapMeBlink 1.2s ease-in-out infinite;
-  pointer-events: none;
-  white-space: nowrap;
-  z-index: 3000;
-}
-
-@media (prefers-color-scheme: light) {
-  .admin-panel-hint { background:#111; color:#fff; }
-}
-@media (prefers-color-scheme: dark) {
-  .admin-panel-hint { background:#fff; color:#111; }
-}
-</style>
 </head>
 <body>
   <div class="fixed-elements">
@@ -1098,7 +1062,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
             <option value="duckduckgo">DuckDuckGo</option>
           </select>
           <input type="text" id="search-input" placeholder="搜索..." />
-          <button id="search-button">🔍</button>
+          <button id="search-button">??</button>
         </div>
       </div>
 
@@ -1107,7 +1071,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
     <!-- 右上角控制区域 -->
     <div class="top-right-controls">
-      <button class="admin-btn" id="admin-btn" onclick="toggleAdminMode()" style="display:none;">设置</button>
+      <button class="admin-btn" id="admin-btn" onclick="toggleAdminMode()" style="display:none;">设置①</button>
       <button class="login-btn" id="login-btn" onclick="handleLoginClick()">登录</button>
 
       <button class="github-btn has-tooltip tooltip-bottom tooltip-green" onclick="openGitHub()" data-tooltip="喜欢请点个star">
@@ -1220,7 +1184,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <path d="M12 24l12-12 12 12m-24 12 12-12 12 12" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-      <button id="theme-toggle" onclick="toggleTheme()">◑</button>
+      <button id="theme-toggle" onclick="toggleTheme()">?</button>
     </div>
 
     <!-- 添加/编辑链接对话框 -->
@@ -3011,7 +2975,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const hint = document.createElement("span");
   hint.className = "admin-panel-hint";
-  hint.textContent = "点我②②";
+  hint.textContent = "点我";
 
   document.body.appendChild(hint);
 
@@ -3023,46 +2987,6 @@ document.addEventListener("DOMContentLoaded", () => {
   syncPosition();
   window.addEventListener("scroll", syncPosition);
   window.addEventListener("resize", syncPosition);
-});
-</script>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const isLoggedIn = !!localStorage.getItem("authToken");
-  if (!isLoggedIn) return;
-
-  // ① 登录后把“设置”改成“设置①”
-  const settingBtn = Array.from(document.querySelectorAll("button, a"))
-    .find(el => el.textContent.trim() === "设置");
-  if (settingBtn) {
-    settingBtn.textContent = "设置①";
-  }
-
-  // ② 只在首次使用前显示“点我②”闪烁提示
-  if (localStorage.getItem("adminHintSeen") === "1") return;
-
-  const handle = document.querySelector(".admin-panel-handle");
-  if (!handle) return;
-
-  const hint = document.createElement("span");
-  hint.className = "admin-panel-hint";
-  hint.textContent = "点我②②";
-  document.body.appendChild(hint);
-
-  const syncPosition = () => {
-    const rect = handle.getBoundingClientRect();
-    hint.style.top = (rect.top + rect.height / 2) + "px";
-  };
-  syncPosition();
-  window.addEventListener("scroll", syncPosition);
-  window.addEventListener("resize", syncPosition);
-
-  // 用户点开一次后台菜单后，永久关闭提示
-  handle.addEventListener("click", () => {
-    localStorage.setItem("adminHintSeen", "1");
-    hint.remove();
-  }, { once: true });
 });
 </script>
 

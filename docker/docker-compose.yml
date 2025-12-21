@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  cf-nav:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: cf-nav
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

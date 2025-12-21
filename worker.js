@@ -795,7 +795,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
     /* 卡片描述提示框（鼠标跟随） */
     #custom-tooltip{
-      position:absolute;display:none;z-index:700;
+      position:fixed;display:none;z-index:99999;
       background:var(--primary);color:#fff;
       padding:6px 10px;border-radius:5px;font-size:12px;
       pointer-events:none;max-width:300px;white-space:pre-wrap;
@@ -1896,6 +1896,7 @@ body.dark-theme .admin-panel-hint{
       card.setAttribute("draggable", isAdmin);
       card.dataset.isPrivate = link.isPrivate;
       card.setAttribute("data-url", link.url);
+      if(link.tips) card.setAttribute("title", link.tips);
 
       const cardIndex = container.children.length;
       card.style.setProperty("--card-index", cardIndex);
@@ -1992,6 +1993,8 @@ body.dark-theme .admin-panel-hint{
       cardActions.appendChild(deleteBtn);
       card.appendChild(cardActions);
 
+      // Hover tooltip: show full bookmark description (link.tips)
+      card.addEventListener("mouseenter", function(e){ handleTooltipMouseMove(e, link.tips, isAdmin); });
       card.addEventListener("mousemove", function(e){ handleTooltipMouseMove(e, link.tips, isAdmin); });
       card.addEventListener("mouseleave", handleTooltipMouseLeave);
 
@@ -2513,7 +2516,7 @@ body.dark-theme .admin-panel-hint{
       if(isLoggedIn){
         loginBtn.textContent = "退出登录";
         adminBtn.style.display = "inline-block";
-        adminBtn.textContent = isAdmin ? "离开设置" : "设置";
+        adminBtn.textContent = isAdmin ? "离开设置" : "设置①";
       }else{
         loginBtn.textContent = "登录";
         adminBtn.style.display = "none";
@@ -2603,29 +2606,39 @@ body.dark-theme .admin-panel-hint{
     /* ================= Tooltip（卡片tips） ================= */
     function handleTooltipMouseMove(e, tips, adminMode){
       const tooltip = document.getElementById("custom-tooltip");
+      if(!tooltip) return;
+
       if(!tips || adminMode){
         tooltip.style.display = "none";
         return;
       }
+
       if(tooltip.textContent !== tips) tooltip.textContent = tips;
       tooltip.style.display = "block";
 
       const offsetX = 15, offsetY = 10;
+
+      // Use viewport coordinates so it works reliably with fixed headers / scrolling.
       const rect = tooltip.getBoundingClientRect();
       const pageWidth = window.innerWidth;
       const pageHeight = window.innerHeight;
 
-      let left = e.pageX + offsetX;
-      let top = e.pageY + offsetY;
+      const cx = (typeof e.clientX === "number") ? e.clientX : 0;
+      const cy = (typeof e.clientY === "number") ? e.clientY : 0;
 
-      if(pageWidth - e.clientX < 200) left = e.pageX - rect.width - offsetX;
-      if(pageHeight - e.clientY < 100) top = e.pageY - rect.height - offsetY;
+      let left = cx + offsetX;
+      let top = cy + offsetY;
+
+      // Keep tooltip within viewport
+      if(pageWidth - cx < 200) left = cx - rect.width - offsetX;
+      if(pageHeight - cy < 100) top = cy - rect.height - offsetY;
 
       tooltip.style.left = left + "px";
       tooltip.style.top = top + "px";
     }
     function handleTooltipMouseLeave(){
-      document.getElementById("custom-tooltip").style.display = "none";
+      const tooltip = document.getElementById("custom-tooltip");
+      if(tooltip) tooltip.style.display = "none";
     }
 
     /* ================= 书签搜索 ================= */
@@ -3154,7 +3167,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const hint = document.createElement("span");
   hint.className = "admin-panel-hint";
-  hint.textContent = "点我";
+  hint.textContent = "点我②";
 
   document.body.appendChild(hint);
 

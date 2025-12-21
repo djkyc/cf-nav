@@ -53,7 +53,7 @@ export default {
 
 要求：
 - 名称：完整、自然，不要简称
-- 描述：20~40 字，说明网站主要用途
+- 描述：10~15 字，概括网站主要用途
 
 网址：${targetUrl}
 
@@ -90,10 +90,10 @@ export default {
       }
 
       /* ---------- CF SMART FALLBACK ---------- */
-      let fallbackDesc = "官方网站";
-      if (domain === "uptodown") fallbackDesc = "提供安卓与电脑应用的安全下载平台";
-      if (domain === "github") fallbackDesc = "面向开发者的开源代码托管与协作平台";
-      if (domain === "cloudflare") fallbackDesc = "提供 CDN、网络安全与性能优化服务的平台";
+      let fallbackDesc = "官方网站入口";
+      if (domain === "uptodown") fallbackDesc = "应用与软件下载平台";
+      if (domain === "github") fallbackDesc = "开源代码托管平台";
+      if (domain === "cloudflare") fallbackDesc = "网络与安全服务平台";
 
       return Response.json({
         name: domain.charAt(0).toUpperCase() + domain.slice(1),

@@ -1,8 +1,116 @@
-// Nav-CF - Cloudflare Worker (KV-backed) - Blue Theme + Import/Export
-// KV Binding name MUST be: CARD_ORDER
-// Env var required: ADMIN_PASSWORD
+// Nav-CF Worker - FINAL (aiGenerate first, no auth, no 401)
+// KV Binding: CARD_ORDER
+// Env:
+// - ADMIN_PASSWORD
+// - AI_API_KEY (can be sk-xxxx placeholder)
 
 import { SEED_DATA, SEED_USER_ID } from "./db.js";
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    /* ======================================================
+       AI GENERATE — FIRST ROUTE, NO AUTH, NEVER 401
+       ====================================================== */
+    if (url.pathname === "/api/aiGenerate") {
+      let targetUrl = "";
+
+      if (request.method === "POST") {
+        try {
+          const body = await request.json();
+          targetUrl = body.url || "";
+        } catch {}
+      } else if (request.method === "GET") {
+        targetUrl = url.searchParams.get("url") || "";
+      }
+
+      if (!targetUrl) {
+        return new Response(JSON.stringify({ name: "", desc: "" }), {
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      const hostname = (() => {
+        try { return new URL(targetUrl).hostname.replace(/^www\./, ""); }
+        catch { return targetUrl; }
+      })();
+      const simpleName = hostname.split(".")[0];
+
+      const aiKey = env.AI_API_KEY || "";
+      const canUseAI = aiKey.startsWith("sk-") && !aiKey.includes("xxxx");
+
+      // ---- OpenAI FIRST (if real key exists) ----
+      if (canUseAI) {
+        try {
+          const prompt = `根据以下网站地址生成：
+网站名称（≤10字）
+一句简介（≤30字）
+网址：${targetUrl}
+返回 JSON：{"name":"","desc":""}`;
+
+          const r = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + aiKey
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [{ role: "user", content: prompt }],
+              temperature: 0.2
+            })
+          });
+
+          const j = await r.json();
+          const t = j.choices?.[0]?.message?.content;
+          if (t) {
+            const ai = JSON.parse(t);
+            return new Response(JSON.stringify({
+              name: ai.name || simpleName,
+              desc: ai.desc || "官方网站"
+            }), {
+              headers: { "Content-Type": "application/json" }
+            });
+          }
+        } catch {}
+      }
+
+      // ---- CF fallback (always works) ----
+      return new Response(JSON.stringify({
+        name: simpleName.charAt(0).toUpperCase() + simpleName.slice(1),
+        desc: "官方网站"
+      }), {
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    /* ================= PAGE ================= */
+    if (url.pathname === "/") {
+      return new Response(HTML_CONTENT, {
+        headers: { "content-type": "text/html; charset=UTF-8" }
+      });
+    }
+
+    /* ================= API ================= */
+    if (url.pathname === "/api/getLinks") {
+      const data = await env.CARD_ORDER.get(SEED_USER_ID, "json") || SEED_DATA;
+      return Response.json(data);
+    }
+
+    if (url.pathname === "/api/saveOrder") {
+      const auth = request.headers.get("Authorization");
+      if (auth !== env.ADMIN_PASSWORD) {
+        return new Response("Unauthorized", { status: 401 });
+      }
+      const body = await request.json();
+      await env.CARD_ORDER.put(SEED_USER_ID, JSON.stringify(body));
+      return Response.json({ ok: true });
+    }
+
+    return new Response("Not Found", { status: 404 });
+  }
+};
 
 const HTML_CONTENT = `<!DOCTYPE html>
 <html lang="zh-CN">

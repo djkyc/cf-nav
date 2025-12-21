@@ -1137,45 +1137,38 @@ const HTML_CONTENT = `<!DOCTYPE html>
   right: 20px;
 }
 
-/* 右侧边缘拉出按钮（仅登录后显示；深色模式更醒目） */
+/* 右侧边缘拉出按钮 */
 .admin-panel-handle{
   position: fixed;
   right: 0;
   top: 55%;
   transform: translateY(-50%);
-  width: 26px;
-  height: 96px;
-  border-radius: 12px 0 0 12px;
+  width: 18px;
+  height: 84px;
+  border-radius: 10px 0 0 10px;
   background: var(--primary);
   cursor: pointer;
   z-index: 2100;
-  box-shadow: 0 8px 22px rgba(0,0,0,.25);
-  opacity: .95;
+  box-shadow: 0 6px 18px rgba(0,0,0,.22);
+  opacity: .92;
   display:flex;
   align-items:center;
   justify-content:center;
-  border: 1px solid rgba(255,255,255,.22);
 }
 .admin-panel-handle::after{
   content:"";
-  width:14px;
-  height:14px;
+  width:12px;
+  height:12px;
   background-repeat:no-repeat;
   background-position:center;
-  background-size:14px 14px;
-  /* 默认：白色箭头（适合浅色模式的深色手柄） */
+  background-size:12px 12px;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
 }
 body.dark-theme .admin-panel-handle{
-  /* 深色主题：手柄改为亮色半透明，避免“黑底黑条看不见” */
-  background: rgba(255,255,255,.18);
-  border: 1px solid rgba(255,255,255,.28);
-  box-shadow: 0 10px 26px rgba(0,0,0,.45);
+  background: var(--dark-primary);
+  box-shadow: 0 8px 22px rgba(0,0,0,.35);
 }
-body.dark-theme .admin-panel-handle::after{
-  /* 深色主题：箭头改深色，保证对比度 */
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
-}
+
 
 /* ===== 侧边后台菜单提示：点我②（闪烁） ===== */
 @keyframes tapMeBlink {
@@ -1184,31 +1177,27 @@ body.dark-theme .admin-panel-handle::after{
   100% { opacity: .25; }
 }
 
-/* 顶部设置①按钮闪烁（首次引导） */
-.admin-btn.blink-setting{ animation: tapMeBlink 1.2s ease-in-out infinite; }
-
 .admin-panel-hint {
   position: fixed;
-  right: 34px;
+  right: 26px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 12px;
   padding: 4px 6px;
   border-radius: 6px;
   animation: tapMeBlink 1.2s ease-in-out infinite;
-  pointer-events: auto;
-  cursor: pointer;
-  user-select: none;
+  pointer-events: none;
   white-space: nowrap;
   z-index: 3000;
+}
+
+.admin-panel-hint{
   background:#111;
   color:#fff;
-  box-shadow: 0 6px 18px rgba(0,0,0,.25);
 }
 body.dark-theme .admin-panel-hint{
-  background: rgba(255,255,255,.92);
+  background:#fff;
   color:#111;
-  box-shadow: 0 10px 24px rgba(0,0,0,.45);
 }
 </style>
 </head>
@@ -1496,17 +1485,15 @@ body.dark-theme .admin-panel-hint{
 
     /* ================= Theme (manual toggle + persist) ================= */
     const THEME_ICONS = {
-      sun:
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">' +
-        '<circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2.5"></circle>' +
-        '<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" ' +
-          'stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path>' +
-        '</svg>',
-      moon:
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">' +
-        '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" ' +
-          'stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>' +
-        '</svg>'
+      sun: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2.5"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path>
+      </svg>`,
+      moon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>`
     };
 
     function updateThemeToggleIcon(){
@@ -1817,7 +1804,6 @@ body.dark-theme .admin-panel-hint{
       const addRemoveControls = document.querySelector(".add-remove-controls");
       addRemoveControls.style.display = isAdmin ? "flex" : "none";
       updateLoginButton();
-      updateAdminPanelEntry();
       logAction("更新UI状态", { isAdmin: isAdmin, isLoggedIn: isLoggedIn });
     }
 
@@ -2495,7 +2481,6 @@ body.dark-theme .admin-panel-hint{
           await loadLinks();
           hideLoginModal();
           updateLoginButton();
-          updateUIState();
           await customAlert("登录成功！", "登录");
           logAction("登录成功");
         }else{
@@ -2526,19 +2511,10 @@ body.dark-theme .admin-panel-hint{
       if(isLoggedIn){
         loginBtn.textContent = "退出登录";
         adminBtn.style.display = "inline-block";
-        adminBtn.textContent = isAdmin ? "离开设置" : "设置①";
-        // 设置①首次闪烁引导：点击一次后不再闪烁
-        try{
-          const dismissed = localStorage.getItem("adminSettingBlinkDismissed")==="1";
-          if(!isAdmin && !dismissed) adminBtn.classList.add("blink-setting");
-          else adminBtn.classList.remove("blink-setting");
-        }catch(e){
-          if(!isAdmin) adminBtn.classList.add("blink-setting");
-        }
+        adminBtn.textContent = isAdmin ? "离开设置" : "设置";
       }else{
         loginBtn.textContent = "登录";
         adminBtn.style.display = "none";
-        adminBtn.classList.remove("blink-setting");
       }
     }
 
@@ -2573,17 +2549,12 @@ body.dark-theme .admin-panel-hint{
       if(!isAdmin && isLoggedIn){
         if(!await validateToken()) return;
 
-        // 点击一次“设置①”后不再闪烁
-        try{ localStorage.setItem("adminSettingBlinkDismissed","1"); }catch(e){}
-
         showLoading("正在进入设置模式...");
 
 
         try{
           isAdmin = true;
-          // 进入设置不再自动标记“点我②”已看过（改为点击提示本身才消失）
           addRemoveControls.style.display = "flex";
-          addRemoveControls.classList.add("open");
           await reloadCardsAsAdmin();
           hideLoading();
           await customAlert("准备设置分类和书签", "设置模式");
@@ -2599,7 +2570,6 @@ body.dark-theme .admin-panel-hint{
         const manageButton = document.querySelector(".category-manage-btn");
         if(manageButton) manageButton.classList.remove("active");
 
-        addRemoveControls.classList.remove("open");
         addRemoveControls.style.display = "none";
         await reloadCardsAsAdmin();
         await customAlert("设置已保存", "设置完成");
@@ -3021,7 +2991,6 @@ body.dark-theme .admin-panel-hint{
         await validateToken();
         updateLoginButton();
         await loadLinks();
-        updateUIState();
         setTimeout(setActiveCategoryButtonByVisibility, 500);
         setTimeout(handleBackToTopVisibility, 100);
       }catch(e){
@@ -3115,79 +3084,10 @@ document.getElementById("ai-generate-btn")?.addEventListener("click", async ()=>
 });
 
 
-
-/* ===== 右侧边缘入口（登录可见；进入设置后不再提示） ===== */
-function updateAdminPanelEntry(){
-  const handle = document.querySelector(".admin-panel-handle");
-  const panel  = document.querySelector(".add-remove-controls");
-  if(!handle) return;
-
-  let dismissed = false;
-  try{ dismissed = localStorage.getItem("adminPanelHintDismissed") === "1"; }catch(e){ dismissed = false; }
-
-  // 未登录：不显示入口与提示
-  // 进入设置：入口隐藏，面板保持打开
-  const shouldShowHandle = isLoggedIn && !isAdmin;
-  handle.style.display = shouldShowHandle ? "flex" : "none";
-
-  if(panel){
-    if(isAdmin) panel.classList.add("open");
-    else panel.classList.remove("open");
-  }
-
-  // 提示：仅登录且未进入设置、且未被“看过”才显示
-  const existingHint = document.querySelector(".admin-panel-hint");
-  const shouldShowHint = isLoggedIn && !isAdmin && !dismissed;
-
-  if(shouldShowHint){
-    const hint = existingHint || document.createElement("span");
-    if(!existingHint){
-      hint.className = "admin-panel-hint";
-      hint.textContent = "点我②";
-      document.body.appendChild(hint);
-      if(!hint.__clickBound){
-        hint.__clickBound = true;
-        hint.addEventListener("click", ()=>{
-          try{ localStorage.setItem("adminPanelHintDismissed","1"); }catch(e){}
-          updateAdminPanelEntry();
-        }, { once: true });
-      }
-    }else{
-      hint.style.display = "inline-block";
-    }
-
-    const syncPosition = () => {
-      const rect = handle.getBoundingClientRect();
-      hint.style.top = (rect.top + rect.height / 2) + "px";
-    };
-
-    // 绑定一次
-    if(!hint.__bound){
-      hint.__bound = true;
-      hint.__syncPosition = syncPosition;
-      window.addEventListener("scroll", syncPosition);
-      window.addEventListener("resize", syncPosition);
-    }
-    syncPosition();
-  }else{
-    if(existingHint){
-      try{
-        if(existingHint.__bound && existingHint.__syncPosition){
-          window.removeEventListener("scroll", existingHint.__syncPosition);
-          window.removeEventListener("resize", existingHint.__syncPosition);
-        }
-      }catch(e){}
-      existingHint.remove();
-    }
-  }
-}
-
 /* ===== 后台面板拉出/自动收起 ===== */
 function openAdminPanel(){
   const panel = document.querySelector(".add-remove-controls");
   if(panel) panel.classList.add("open");
-  // 打开面板不再自动标记“点我②”已看过（改为点击提示本身才消失）
-  updateAdminPanelEntry();
 }
 
 document.addEventListener("click", (e) => {
@@ -3196,8 +3096,6 @@ document.addEventListener("click", (e) => {
   if(!panel || !handle) return;
 
   if(panel.classList.contains("open")){
-    // 设置模式下保持打开，避免入口隐藏后无法重新打开
-    if(isAdmin) return;
     if(!panel.contains(e.target) && !handle.contains(e.target)){
       panel.classList.remove("open");
     }
@@ -3244,9 +3142,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <div class="admin-panel-handle" onclick="openAdminPanel()" title="后台操作"></div>
 
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  try{ updateAdminPanelEntry(); }catch(e){}
+  const handle = document.querySelector(".admin-panel-handle");
+  if (!handle) return;
+
+  if (document.querySelector(".admin-panel-hint")) return;
+
+  const hint = document.createElement("span");
+  hint.className = "admin-panel-hint";
+  hint.textContent = "点我";
+
+  document.body.appendChild(hint);
+
+  const syncPosition = () => {
+    const rect = handle.getBoundingClientRect();
+    hint.style.top = (rect.top + rect.height / 2) + "px";
+  };
+
+  syncPosition();
+  window.addEventListener("scroll", syncPosition);
+  window.addEventListener("resize", syncPosition);
 });
 </script>
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Card-Tab Cloudflare 一键部署"
+echo "🚀 Nav-CF Cloudflare 一键部署"
 
 # 检查 wrangler
 if ! command -v wrangler &> /dev/null; then
